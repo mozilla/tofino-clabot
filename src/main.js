@@ -24,6 +24,8 @@ clabot.createApp({
     link: 'http://localhost/contributorform',
     maintainer: 'Mossop'
   },
+  skipCollaborators: false,
+  skipContributors: false,
   secrets: {
     'Mossop': {
       'tofino': process.env.MOSSOP_TOFINO_SECRET
