@@ -21,7 +21,7 @@ clabot.createApp({
   addContractor: contributors.addContributor,
   token: process.env.GITHUB_TOKEN,
   templateData: {
-    link: 'http://localhost/contributorform',
+    link: "https://mozilla-cla.herokuapp.com/",
     maintainer: 'Mossop'
   },
   skipCollaborators: false,
