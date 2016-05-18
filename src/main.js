@@ -8,26 +8,15 @@ const contributors = require("./contributors");
 const bodyParser = require("body-parser");
 
 const app = express();
-app.use("/sign", bodyParser.urlencoded({ extended: true }));
+const claRoute = new express.Router();
+app.use("/clabot", claRoute);
 
 app.get("/", function(req, res) {
   res.redirect(301, "/static/index.html");
 });
 
-app.use("/static", express.static(path.join(__dirname, "..", "static")));
-
-app.post("/sign", function(req, res) {
-  contributors.addContributor(req.body.email, function(err) {
-    if (err) {
-      res.status(500).send("Server Error");
-    } else {
-      res.redirect(301, "/static/signed.html")
-    }
-  });
-});
-
 clabot.createApp({
-  app: app,
+  app: claRoute,
   getContractors: contributors.getContributors,
   addContractor: contributors.addContributor,
   token: process.env.GITHUB_TOKEN,
@@ -42,7 +31,19 @@ clabot.createApp({
   }
 });
 
-//app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/submit", bodyParser.urlencoded({ extended: true }));
+
+app.use("/static", express.static(path.join(__dirname, "..", "static")));
+
+app.post("/submit/sign", function(req, res) {
+  contributors.addContributor(req.body.email, function(err) {
+    if (err) {
+      res.status(500).send("Server Error");
+    } else {
+      res.redirect(301, "/static/signed.html")
+    }
+  });
+});
 
 const port = process.env.PORT || 1337;
 
