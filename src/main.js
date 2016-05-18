@@ -8,7 +8,7 @@ const contributors = require("./contributors");
 const bodyParser = require("body-parser");
 
 const app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/sign", bodyParser.urlencoded({ extended: true }));
 
 app.get("/", function(req, res) {
   res.redirect(301, "/static/index.html");
