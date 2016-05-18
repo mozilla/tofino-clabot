@@ -47,6 +47,17 @@ app.post("/submit/sign", function(req, res) {
   });
 });
 
+app.get("/list", function(req, res) {
+  contributors.getContributors(function(err, list) {
+    if (err) {
+      res.status(500).send(err);
+      return;
+    }
+
+    res.status(200).set("Content-Type", "text/plain").send("Contributors:\n\n" + list.join("\n"));
+  });
+});
+
 const port = process.env.PORT || 1337;
 
 app.listen(port);

@@ -1,40 +1,57 @@
 "use strict";
 
-const path = require("path");
-const fs = require("fs");
+const MongoClient = require("mongodb").MongoClient
 
-const DATA_FILE = path.normalize(path.join(__dirname, "..", "contributors"));
-
-// We use synchronous file access here because it somewhat protects us from
-// multiple simultaneous reads and writes.
+const URI = process.env.MONGODB_URI;
+console.log(URI);
 
 exports.getContributors = function(callback) {
-  try {
-    const lines = fs.readFileSync(DATA_FILE, { encoding: "utf8" });
-    callback(null, lines.split("\n"));
-  } catch (e) {
-    console.error(e);
-    callback(null, []);
-  }
-}
-
-exports.addContributor = function(contributor, callback) {
-  exports.getContributors(function(err, contributors) {
+  MongoClient.connect(URI, function(err, db) {
     if (err) {
       callback(err);
       return;
     }
 
-    if (contributors.indexOf(contributor) >= 0) {
-      callback(null);
+    var collection = db.collection("contributors");
+    collection.find().toArray(function(err, docs) {
+      if (err) {
+        db.close();
+        callback(err);
+        return;
+      }
+
+      docs = docs.map(function(d) { return d.email; });
+      db.close();
+      callback(null, docs);
+    });
+  });
+}
+
+exports.addContributor = function(contributor, callback) {
+  MongoClient.connect(URI, function(err, db) {
+    if (err) {
+      callback(err);
       return;
     }
 
-    try {
-      fs.appendFileSync(DATA_FILE, contributor + "\n");
-      callback();
-    } catch (e) {
-      callback(e);
-    }
+    var collection = db.collection("contributors");
+    collection.find({ email: contributor }).hasNext(function(err, hasNext) {
+      if (err) {
+        db.close();
+        callback(err);
+        return;
+      }
+
+      if (hasNext) {
+        db.close();
+        callback(null);
+        return;
+      }
+
+      collection.insertOne({ email: contributor }, null, function(err) {
+        db.close();
+        callback(err);
+      });
+    });
   });
 }
