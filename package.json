@@ -1,0 +1,10 @@
+{
+  "name": "tofino-clabot",
+  "description": "A clabot for project tofino",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "clabot": "0.1.0"
+  }
+}
