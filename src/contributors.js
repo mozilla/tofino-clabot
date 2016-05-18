@@ -20,7 +20,7 @@ exports.getContributors = function(callback) {
         return;
       }
 
-      docs = docs.map(function(d) { return d.email; });
+      docs = docs.map(function(d) { return d.username; });
       db.close();
       callback(null, docs);
     });
@@ -35,7 +35,7 @@ exports.addContributor = function(contributor, callback) {
     }
 
     var collection = db.collection("contributors");
-    collection.find({ email: contributor }).hasNext(function(err, hasNext) {
+    collection.find({ username: contributor }).hasNext(function(err, hasNext) {
       if (err) {
         db.close();
         callback(err);
@@ -48,7 +48,7 @@ exports.addContributor = function(contributor, callback) {
         return;
       }
 
-      collection.insertOne({ email: contributor }, null, function(err) {
+      collection.insertOne({ username: contributor }, null, function(err) {
         db.close();
         callback(err);
       });
