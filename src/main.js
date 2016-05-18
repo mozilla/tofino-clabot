@@ -38,7 +38,7 @@ app.use("/submit", bodyParser.urlencoded({ extended: true }));
 app.use("/static", express.static(path.join(__dirname, "..", "static")));
 
 app.post("/submit/sign", function(req, res) {
-  contributors.addContributor(req.body.email, function(err) {
+  contributors.addContributor(req.body.username, function(err) {
     if (err) {
       res.status(500).send("Server Error");
     } else {
