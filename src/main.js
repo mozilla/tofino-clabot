@@ -15,10 +15,30 @@ app.get("/", function(req, res) {
   res.redirect(301, "/static/index.html");
 });
 
+// For fun clabot doesn't use the normal style of node callbacks
+function getContractors(callback) {
+  contributors.getContributors(function(err, contributors) {
+    if (err) {
+      console.error(err);
+      callback([]);
+      return;
+    }
+
+    callback(contributors);
+  })
+}
+
+function addContractor(contractor, callback) {
+  contributors.addContributor(contractor, function(err) {
+    console.error(err);
+    callback(!err);
+  });
+}
+
 clabot.createApp({
   app: claRoute,
-  getContractors: contributors.getContributors,
-  addContractor: contributors.addContributor,
+  getContractors: getContractors,
+  addContractor: addContractor,
   token: process.env.GITHUB_TOKEN,
   templateData: {
     link: "https://mozilla-cla.herokuapp.com/",
